@@ -28,7 +28,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -42,8 +42,17 @@ public class SecurityConfig {
 
                         // ADMIN ONLY
                         .requestMatchers("/leaves/all").hasRole("ADMIN")
-                        .requestMatchers("/leaves/*/approve").hasRole("ADMIN")
-                        .requestMatchers("/leaves/*/reject").hasRole("ADMIN")
+                        .requestMatchers("/leaves/*/approve").authenticated()
+                        .requestMatchers("/leaves/*/reject").authenticated()
+
+                        .requestMatchers("/tasks/all").hasRole("ADMIN")
+                        .requestMatchers("/tasks").hasRole("ADMIN")
+
+                        .requestMatchers("/tasks/my")
+                        .hasAnyRole("ADMIN","MEMBER")
+
+                        .requestMatchers("/tasks/*/status")
+                        .hasAnyRole("ADMIN","MEMBER")
 
                         // USER + ADMIN
                         .requestMatchers("/leaves/my").hasAnyRole("ADMIN", "MEMBER")
